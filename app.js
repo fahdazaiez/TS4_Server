@@ -44,7 +44,7 @@ async function loadLatestVersion() {
         // ====================================================
 
         const downloadUrl =
-            `https://github.com/${GITHUB_REPO}/raw/refs/heads/${GITHUB_BRANCH}/downloads/${fileName}`;
+            `https://github.com/${GITHUB_REPO}/raw/refs/heads/${GITHUB_BRANCH}/downloads/${fileName}?download=1`;
 
 
         // ====================================================
