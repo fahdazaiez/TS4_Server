@@ -1,22 +1,97 @@
-async function loadVersions(){
-  const list=document.getElementById("versionsList");
-  if(!list) return;
-  try{
-    const res=await fetch("data/versions.json",{cache:"no-store"});
-    const data=await res.json();
-    list.innerHTML=data.versions.map((v,i)=>`
-      <article class="version">
-        <div class="version-number">${v.version}</div>
-        <div class="version-meta"><div class="version-tag">${i===0?"LATEST":"RELEASE"}</div><div>${v.date} · ${v.notes}</div></div>
-        ${v.downloadUrl ? `<a class="button secondary" href="${v.downloadUrl}">Download</a>` : ""}
-      </article>
-    `).join("");
-    const latest=document.getElementById("latestVersion");
-    const date=document.getElementById("releaseDate");
-    if(latest && data.versions[0]) latest.textContent=data.versions[0].version;
-    if(date && data.versions[0]) date.textContent=data.versions[0].date;
-  }catch(e){
-    list.innerHTML='<div class="notice">Could not load the version list.</div>';
-  }
+const UPDATE_URL = "/data/latest.json";
+
+async function loadLatestVersion() {
+    try {
+        const response = await fetch(
+            UPDATE_URL + "?t=" + Date.now(),
+            {
+                cache: "no-store"
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Could not load latest.json");
+        }
+
+        const data = await response.json();
+
+        const version = data.version;
+
+        if (!version) {
+            throw new Error("Version not found");
+        }
+
+        // Create automatic filename
+        const fileName = `TS4_Updater_v${version}.exe`;
+
+        // Create automatic download URL
+        const downloadUrl = `/downloads/${fileName}`;
+
+        // Display version
+        const versionElement =
+            document.getElementById("latestVersion");
+
+        if (versionElement) {
+            versionElement.textContent = version;
+        }
+
+        // Display filename
+        const fileElement =
+            document.getElementById("latestFile");
+
+        if (fileElement) {
+            fileElement.textContent = fileName;
+        }
+
+        // Configure download button
+        const downloadButton =
+            document.getElementById("downloadButton");
+
+        if (downloadButton) {
+            downloadButton.href = downloadUrl;
+            downloadButton.setAttribute("download", fileName);
+        }
+
+        // Display release
+        const releaseElement =
+            document.getElementById("releaseDate");
+
+        if (releaseElement) {
+            releaseElement.textContent =
+                "Version " + version;
+        }
+
+        console.log("Latest version:", version);
+        console.log("File:", fileName);
+        console.log("URL:", downloadUrl);
+
+    } catch (error) {
+
+        console.error(error);
+
+        const versionElement =
+            document.getElementById("latestVersion");
+
+        if (versionElement) {
+            versionElement.textContent = "Unavailable";
+        }
+
+        const fileElement =
+            document.getElementById("latestFile");
+
+        if (fileElement) {
+            fileElement.textContent = "Unavailable";
+        }
+
+        const downloadButton =
+            document.getElementById("downloadButton");
+
+        if (downloadButton) {
+            downloadButton.removeAttribute("href");
+            downloadButton.textContent =
+                "Download unavailable";
+        }
+    }
 }
-loadVersions();
+
+loadLatestVersion();
