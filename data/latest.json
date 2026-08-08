@@ -1,3 +1,5 @@
 {
-    "version": "1.1.0"
+  "version": "1.1.0",
+  "downloadUrl": "https://github.com/fahdazaiez/TS4_Server/releases/download/v1.1.0/TS4_Updater_v1.1.0.exe",
+  "releaseUrl": "https://github.com/fahdazaiez/TS4_Server/releases/tag/v1.1.0"
 }

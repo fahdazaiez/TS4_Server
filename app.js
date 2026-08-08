@@ -1,15 +1,7 @@
 const UPDATE_URL = "/data/latest.json";
 
-const GITHUB_REPO = "fahdazaiez/TS4_Server";
-const GITHUB_BRANCH = "main";
-
 async function loadLatestVersion() {
-
     try {
-
-        // ====================================================
-        // GET LATEST VERSION
-        // ====================================================
 
         const response = await fetch(
             UPDATE_URL + "?t=" + Date.now(),
@@ -25,93 +17,102 @@ async function loadLatestVersion() {
         const data = await response.json();
 
         const version = data.version;
+        const downloadUrl = data.downloadUrl;
+        const releaseUrl = data.releaseUrl;
 
         if (!version) {
-            throw new Error("Version not found in latest.json");
+            throw new Error("Version missing");
         }
 
+        if (!downloadUrl) {
+            throw new Error("Download URL missing");
+        }
 
-        // ====================================================
-        // CREATE FILE NAME
-        // ====================================================
+        // ================================================
+        // FILE NAME
+        // ================================================
 
         const fileName =
             `TS4_Updater_v${version}.exe`;
 
 
-        // ====================================================
-        // CREATE GITHUB DOWNLOAD URL
-        // ====================================================
-
-        const downloadUrl =
-            `https://github.com/${GITHUB_REPO}/raw/refs/heads/${GITHUB_BRANCH}/downloads/${fileName}?download=1`;
-
-
-        // ====================================================
-        // DISPLAY VERSION
-        // ====================================================
+        // ================================================
+        // VERSION
+        // ================================================
 
         const versionElement =
             document.getElementById("latestVersion");
 
         if (versionElement) {
-
             versionElement.textContent = version;
-
         }
 
 
-        // ====================================================
-        // DISPLAY FILE NAME
-        // ====================================================
+        // ================================================
+        // FILE NAME
+        // ================================================
 
         const fileElement =
             document.getElementById("latestFile");
 
         if (fileElement) {
-
             fileElement.textContent = fileName;
-
         }
 
 
-        // ====================================================
-        // SET DOWNLOAD BUTTON
-        // ====================================================
+        // ================================================
+        // RELEASE
+        // ================================================
+
+        const releaseElement =
+            document.getElementById("releaseDate");
+
+        if (releaseElement) {
+            releaseElement.textContent =
+                "Version " + version;
+        }
+
+
+        // ================================================
+        // DOWNLOAD BUTTON
+        // ================================================
 
         const downloadButton =
             document.getElementById("downloadButton");
 
         if (downloadButton) {
 
-            downloadButton.href = downloadUrl;
+            downloadButton.href =
+                downloadUrl;
 
-            downloadButton.setAttribute(
-                "download",
-                fileName
+            downloadButton.removeAttribute(
+                "download"
             );
 
-        }
-
-
-        // ====================================================
-        // RELEASE VERSION
-        // ====================================================
-
-        const releaseElement =
-            document.getElementById("releaseDate");
-
-        if (releaseElement) {
-
-            releaseElement.textContent =
-                "Version " + version;
+            downloadButton.textContent =
+                "Download .EXE";
 
         }
 
 
-        // ====================================================
+        // ================================================
+        // OPTIONAL RELEASE LINK
+        // ================================================
+
+        const releaseButton =
+            document.getElementById("releaseButton");
+
+        if (releaseButton && releaseUrl) {
+
+            releaseButton.href =
+                releaseUrl;
+
+        }
+
+
+        // ================================================
         // DEBUG
-        // ====================================================
+        // ================================================
 
         console.log(
             "Latest version:",
@@ -124,10 +125,14 @@ async function loadLatestVersion() {
         );
 
         console.log(
-            "GitHub download:",
+            "Download URL:",
             downloadUrl
         );
 
+        console.log(
+            "Release URL:",
+            releaseUrl
+        );
 
     } catch (error) {
 
@@ -141,10 +146,8 @@ async function loadLatestVersion() {
             document.getElementById("latestVersion");
 
         if (versionElement) {
-
             versionElement.textContent =
                 "Unavailable";
-
         }
 
 
@@ -152,10 +155,8 @@ async function loadLatestVersion() {
             document.getElementById("latestFile");
 
         if (fileElement) {
-
             fileElement.textContent =
                 "Unavailable";
-
         }
 
 
@@ -164,7 +165,9 @@ async function loadLatestVersion() {
 
         if (downloadButton) {
 
-            downloadButton.removeAttribute("href");
+            downloadButton.removeAttribute(
+                "href"
+            );
 
             downloadButton.textContent =
                 "Download unavailable";
@@ -172,7 +175,6 @@ async function loadLatestVersion() {
         }
 
     }
-
 }
 
 
